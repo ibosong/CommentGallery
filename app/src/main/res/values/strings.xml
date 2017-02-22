@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CommentGallery</string>
+    <string name="transition">transition</string>
+</resources>
