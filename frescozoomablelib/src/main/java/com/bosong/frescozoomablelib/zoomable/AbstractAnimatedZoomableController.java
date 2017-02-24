@@ -180,7 +180,8 @@ public abstract class AbstractAnimatedZoomableController extends DefaultZoomable
 
     @Override
     public void onGestureEnd(TransformGestureDetector detector) {
-        if (getScaleFactor() < 1.0f) { // When the image was zoomed in, releasing the fingers will restore the size of image.
+        // When the image was zoomed in, releasing the fingers will restore the size of image.
+        if (getScaleFactor() < 1.0f) {
             zoomToPoint(1.0f, new PointF(0.f, 0.f), new PointF(0.f, 0.f), LIMIT_ALL, 300, null);
         }
     }

@@ -477,11 +477,6 @@ public class DefaultZoomableController
         }
         transformCorrected |=
                 limitScale(outTransform, detector.getPivotX(), detector.getPivotY(), limitTypes);
-
-        // Handle translation only when scale factor more than 1.0f
-//        if(getMatrixScaleFactor( outTransform) > 1.0f){
-//
-//        }
         if (mIsTranslationEnabled) {
             outTransform.postTranslate(detector.getTranslationX(), detector.getTranslationY());
         }
