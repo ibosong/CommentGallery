@@ -8,18 +8,6 @@
     tools:context="com.bosong.commentgallery.MainActivity"
     android:background="@android:color/white">
 
-
-    <!--<com.bosong.commentgallerylib.CommentGallery-->
-        <!--android:id="@+id/comment_gallery"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="0dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--app:layout_constraintHorizontal_bias="0.0"-->
-        <!--app:layout_constraintVertical_bias="0.0" />-->
-
     <com.bosong.commentgallerylib.CommentImageGrid
         android:id="@+id/comment_grid"
         android:layout_width="match_parent"

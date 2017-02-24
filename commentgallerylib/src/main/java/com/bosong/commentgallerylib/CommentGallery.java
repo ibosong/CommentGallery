@@ -93,9 +93,6 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
         return urls;
     }
 
-    /**
-     * 点击图片时，显示或隐藏顶部和底部的信息区域
-     */
     private void handleMaskVisual(){
         if(mTitleLayout.getVisibility() == VISIBLE){
             mTitleLayout.setVisibility(GONE);
@@ -106,9 +103,7 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
         }
     }
 
-    /**
-     * 点击底部区域时，展开或收缩
-     */
+
     private void handleCommentVisual(){
         if(mIsCommentCollapsed){
             this.expandComment();
