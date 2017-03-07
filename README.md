@@ -5,6 +5,25 @@ which supports zoom-in and zoom-out. Please feel free to let me know if your hav
 
 ![](https://github.com/ibosong/CommentGallery/blob/master/CommentGallery.gif)
 
+## Gradle Dependency
+
+Step 1. Add the JitPack repository to your build file:
+```
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+ ```
+ Step 2. Add the dependency
+ ```
+ dependencies {
+         compile 'com.github.ibosong.CommentGallery:frescozoomablelib:1.0'
+         compile 'com.github.ibosong.CommentGallery:commentgallerylib:1.0'
+
+	}
+ ```
 
 ## Usage
 
