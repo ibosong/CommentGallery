@@ -15,6 +15,5 @@
         app:placeholder_image="@drawable/placeholder"
         app:fallback_image="@drawable/placeholder"
         app:vertical_space="7.5dp"
-        app:horizontal_space="7.5dp"
-        android:stretchMode="columnWidth"/>
+        app:horizontal_space="7.5dp"/>
 </RelativeLayout>
