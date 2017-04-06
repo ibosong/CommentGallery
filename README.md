@@ -20,7 +20,7 @@ allprojects {
 
 ## Usage
 
-1. Usage of ZoomableDraweeView
+### 1. Usage of ZoomableDraweeView
   - Add the dependency
 
     ```
@@ -31,7 +31,7 @@ allprojects {
 
    - Use `ZoomableDraweeView` as the Fresco `SimpleDraweeView`.
 
-2. Usage of LargeImageGallery
+### 2. Usage of LargeImageGallery
  
   - Add the dependency
 
@@ -60,7 +60,7 @@ allprojects {
     mLargeImageGallery.setOnItemClickListener(this);
     ```
 
-3. Usage of CommentImageGrid
+### 3. Usage of CommentImageGrid
 
   - Add the dependency
 
