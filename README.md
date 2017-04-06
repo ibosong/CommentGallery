@@ -1,13 +1,14 @@
 # CommentGallery
 
-This is an Android sample for demonstrating some common scenarios, such as a grid with images and a large image viewer
+This project contains serval librarys for demonstrating image gallery with [Fresco](https://github.com/facebook/fresco), such as image grid and large image viewer
 which supports zoom-in and zoom-out. Please feel free to let me know if your have any questions.
 
 ![](https://github.com/ibosong/CommentGallery/blob/master/CommentGallery.gif)
 
 ## Gradle Dependency
 
-Step 1. Add the JitPack repository to your build file:
+Add the JitPack repository to your build file:
+
 ```
 allprojects {
 		repositories {
@@ -16,38 +17,89 @@ allprojects {
 		}
 	}
  ```
- Step 2. Add the dependency
- ```
- dependencies {
-         compile 'com.github.ibosong.CommentGallery:frescozoomablelib:1.0'
-         compile 'com.github.ibosong.CommentGallery:commentgallerylib:1.0'
-
-	}
- ```
 
 ## Usage
 
-1. Usage of LargeImageGallery
+1. Usage of ZoomableDraweeView
+  - Add the dependency
+
+    ```
+    dependencies {
+         compile 'com.github.ibosong.CommentGallery:frescozoomablelib:1.0.1'
+  	    }
+    ```
+
+   - Use `ZoomableDraweeView` as the Fresco `SimpleDraweeView`.
+
+2. Usage of LargeImageGallery
  
+  - Add the dependency
+
+    ```
+    dependencies {
+         compile 'com.github.ibosong.CommentGallery:largeimagegallerylib:1.0.1'
+  	    }
+    ```
+
   - Add LargeImageGallery to your xml file.
   
-   ```
+    ```
     <com.bosong.commentgallerylib.LargeImageGallery
-        android:id="@+id/image_gallery"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-   ```
+            android:id="@+id/image_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    ```
    
     
   - Set image urls with `setData(List<String> urls)` method.
-  That's all. There are also some listeners your can set:
+
+    That's all. There are also some listeners your can set:
   
-   ```
-   mLargeImageGallery.setOnImageSelectedListener(this);
-   mLargeImageGallery.setOnItemClickListener(this);
-   ```
+    ```
+    mLargeImageGallery.setOnImageSelectedListener(this);
+    mLargeImageGallery.setOnItemClickListener(this);
+    ```
+
+3. Usage of CommentImageGrid
+
+  - Add the dependency
+
+    ```
+    dependencies {
+         compile 'com.github.ibosong.CommentGallery:commentgallerylib:1.0.1'
+  	    }
+    ```
+
+  - Add CommentImageGrid to xml layout file
+
+    ```
+    <com.bosong.commentgallerylib.CommentImageGrid
+        android:id="@+id/comment_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:placeholder_image="@drawable/placeholder"
+        app:fallback_image="@drawable/placeholder"
+        app:vertical_space="7.5dp"
+        app:horizontal_space="7.5dp"/>
+    ```
+
+  - Attribures
+  
+    Attribure| Usage 
+    -|-
+    placeholder_image | set placeholder image
+    fallback_image    | set fallback image
+    horizontal_space  | horizontal space between items
+    vertical_space    | vertical space between items
+
+    
+  - Set image urls with `List<String>`
+
+    ```
+    mCommentGrid.setData(urls);
+    ```
 
 
-2. Usage of CommentImageGrid
+    ## Last thing
 
-    (Editing...)
+    Enjoy yourself!
