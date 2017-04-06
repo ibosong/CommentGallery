@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bosong.largeimagegallerylib.LargeImageGallery;
+
 import java.util.List;
 
 /**

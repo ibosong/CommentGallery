@@ -44,7 +44,7 @@ public class CommentImageGrid extends ViewGroup {
     @ColorInt
     private int mImageBorderColor;
     private int mMaxColumnCount = 3;
-    private int mRowCount; //动态计算出来
+    private int mRowCount;
     private int mWidth;
     private OnItemClickListener mOnItemClickListener;
     private int mNewViewCount, mOldViewCount;

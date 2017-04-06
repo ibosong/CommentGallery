@@ -1,4 +1,4 @@
-package com.bosong.commentgallerylib;
+package com.bosong.largeimagegallerylib;
 
 import android.content.Context;
 import android.support.annotation.AttrRes;

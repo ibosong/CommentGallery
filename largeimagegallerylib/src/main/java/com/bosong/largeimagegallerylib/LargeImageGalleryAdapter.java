@@ -1,4 +1,4 @@
-package com.bosong.commentgallerylib;
+package com.bosong.largeimagegallerylib;
 
 import android.support.annotation.DrawableRes;
 import android.support.v4.view.PagerAdapter;

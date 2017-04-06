@@ -1,1 +1,1 @@
-include ':app', ':commentgallerylib', ':frescozoomablelib'
+include ':app', ':commentgallerylib', ':frescozoomablelib', ':largeimagegallerylib'

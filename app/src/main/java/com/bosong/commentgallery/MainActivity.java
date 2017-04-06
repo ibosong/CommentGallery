@@ -1,18 +1,12 @@
 package com.bosong.commentgallery;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 
 import com.bosong.commentgallerylib.CommentGalleryContainer;
 import com.bosong.commentgallerylib.CommentImageGrid;
-import com.bosong.commentgallerylib.LargeImageGallery;
-import com.bosong.commentgallerylib.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
