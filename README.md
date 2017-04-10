@@ -1,6 +1,6 @@
 # CommentGallery
 
-This project contains serval librarys for demonstrating image gallery with [Fresco](https://github.com/facebook/fresco), such as image grid and large image viewer
+This project contains serval librarys for demonstrating image gallery with [Fresco](https://github.com/facebook/fresco)'s [ZoomableDraweeView](https://github.com/facebook/fresco/blob/master/samples/zoomable/src/main/java/com/facebook/samples/zoomable/ZoomableDraweeView.java)(optimized some default behaviors), such as image grid and large image viewer
 which supports zoom-in and zoom-out. Please feel free to let me know if your have any questions.
 
 ![](https://github.com/ibosong/CommentGallery/blob/master/CommentGallery.gif)
