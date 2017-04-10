@@ -1,6 +1,6 @@
 # CommentGallery
 
-This project contains serval librarys for demonstrating image gallery with [Fresco](https://github.com/facebook/fresco)'s [ZoomableDraweeView](https://github.com/facebook/fresco/blob/master/samples/zoomable/src/main/java/com/facebook/samples/zoomable/ZoomableDraweeView.java)(optimized some default behaviors), such as image grid and large image viewer
+This project contains serval librarys for demonstrating image gallery with [Fresco](https://github.com/facebook/fresco)'s [ZoomableDraweeView](https://github.com/facebook/fresco/blob/master/samples/zoomable/src/main/java/com/facebook/samples/zoomable/ZoomableDraweeView.java)(Use the optimized version I made), such as image grid and large image viewer
 which supports zoom-in and zoom-out. Please feel free to let me know if your have any questions.
 
 ![](https://github.com/ibosong/CommentGallery/blob/master/CommentGallery.gif)
@@ -21,6 +21,9 @@ allprojects {
 ## Usage
 
 ### 1. Usage of ZoomableDraweeView
+
+I've optimized some default behaviors to the official ZoomableDraweeView to make it more perfect.
+
   - Add the dependency
 
     ```
