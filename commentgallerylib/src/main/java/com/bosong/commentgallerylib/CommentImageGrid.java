@@ -92,8 +92,8 @@ public class CommentImageGrid extends ViewGroup {
         }
     }
 
-    public void setOnItemClickLisener(OnItemClickListener lisener) {
-        mOnItemClickListener = lisener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mOnItemClickListener = listener;
     }
 
     @Override
