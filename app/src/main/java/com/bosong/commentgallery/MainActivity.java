@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity{
         commentList = new CommentGalleryContainer(urls, SAMPLE_COMMENT);
 
         mCommentGrid.setData(urls);
-        mCommentGrid.setOnItemClickLisener(new CommentImageGrid.OnItemClickListener() {
+        mCommentGrid.setOnItemClickListener(new CommentImageGrid.OnItemClickListener() {
             @Override
             public void OnItemClick(int position) {
                 Intent it = new Intent();
