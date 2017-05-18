@@ -56,6 +56,7 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
     private final RectF mViewBounds = new RectF();
 
     private DraweeController mHugeImageController;
+    // Edit by BoSong: Change mZoomableController to AnimatedZoomableController type
     private ZoomableController mZoomableController;
     private GestureDetector mTapGestureDetector;
     private boolean mAllowTouchInterceptionWhileZoomed =
@@ -383,8 +384,10 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
     protected void updateZoomableControllerBounds() {
         getImageBounds(mImageBounds);
         getLimitBounds(mViewBounds);
+
         mZoomableController.setImageBounds(mImageBounds);
         mZoomableController.setViewBounds(mViewBounds);
+        mZoomableController.initDefaultScale(mViewBounds, mImageBounds);
         FLog.v(
                 getLogTag(),
                 "updateZoomableControllerBounds: view %x, view bounds: %s, image bounds: %s",

@@ -111,6 +111,13 @@ public interface ZoomableController {
   void setViewBounds(RectF viewBounds);
 
   /**
+   * Add by BoSong
+   * @param viewBounds
+   * @param imageBounds
+   */
+  void initDefaultScale(RectF viewBounds, RectF imageBounds);
+
+  /**
    * Allows the controller to handle a touch event.
    *
    * @param event the touch event

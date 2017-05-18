@@ -89,8 +89,6 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
                         .setUri(mData.get(position % mData.size()))
                         .build();
-                ((DefaultZoomableController)zoomableDraweeView.getZoomableController()).setMaxScaleFactor(3.0f);
-                ((DefaultZoomableController)zoomableDraweeView.getZoomableController()).setMinScaleFactor(0.7f);
                 zoomableDraweeView.setController(controller);
                 GenericDraweeHierarchyBuilder builder =
                         new GenericDraweeHierarchyBuilder(container.getResources());

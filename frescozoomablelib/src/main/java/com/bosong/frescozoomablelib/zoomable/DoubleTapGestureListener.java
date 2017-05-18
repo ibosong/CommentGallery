@@ -66,8 +66,9 @@ public class DoubleTapGestureListener extends GestureDetector.SimpleOnGestureLis
             case MotionEvent.ACTION_UP:
                 if (mDoubleTapScroll) {
                     float scale = calcScale(vp);
-                    if (scale < 1.0f) {
-                        zc.zoomToPoint(1.0f, mDoubleTapImagePoint, mDoubleTapViewPoint,
+                    // Edit by BoSong
+                    if (scale < zc.getOriginScaleFactor()) {
+                        zc.zoomToPoint(zc.getOriginScaleFactor(), mDoubleTapImagePoint, mDoubleTapViewPoint,
                                 DefaultZoomableController.LIMIT_ALL,
                                 DURATION_MS,
                                 null);
@@ -87,7 +88,8 @@ public class DoubleTapGestureListener extends GestureDetector.SimpleOnGestureLis
                                 null);
                     } else {
                         zc.zoomToPoint(
-                                /*minScale*/1.0f,
+                                // Edit by BoSong: 1.0 -> zc.getOriginScaleFactor()
+                                zc.getOriginScaleFactor(),
                                 ip,
                                 vp,
                                 DefaultZoomableController.LIMIT_ALL,

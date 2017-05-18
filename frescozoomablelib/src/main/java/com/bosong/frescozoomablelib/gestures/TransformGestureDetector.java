@@ -157,6 +157,21 @@ public class TransformGestureDetector implements MultiPointerGestureDetector.Lis
     }
 
     /**
+     * Add by Bo Song
+     */
+    public float getCurrentX() {
+        return calcAverage(mDetector.getCurrentX(), mDetector.getPointerCount());
+    }
+
+    /**
+     * Add by Bo Song
+     * @return
+     */
+    public float getCurrentY() {
+        return calcAverage(mDetector.getCurrentY(), mDetector.getPointerCount());
+    }
+
+    /**
      * Gets the X component of the translation
      */
     public float getTranslationX() {

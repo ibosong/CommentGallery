@@ -61,6 +61,10 @@ public class DefaultZoomableController
 
     private static final RectF IDENTITY_RECT = new RectF(0, 0, 1, 1);
 
+    // Add by BoSong
+    private static final float MAX_SCALE_FACTOR = 3.0F;
+    private static final float MIN_SCALE_FACTOR = 0.7F;
+
     private TransformGestureDetector mGestureDetector;
 
     private Listener mListener = null;
@@ -70,8 +74,11 @@ public class DefaultZoomableController
     private boolean mIsScaleEnabled = true;
     private boolean mIsTranslationEnabled = true;
 
-    private float mMinScaleFactor = 1.0f;
-    private float mMaxScaleFactor = 2.0f;
+    // Edit by BoSong: mMinScaleFactor->0.7 mMaxScaleFactor->3.0
+    private float mMinScaleFactor = MIN_SCALE_FACTOR;
+    private float mMaxScaleFactor = MAX_SCALE_FACTOR;
+    // Add by BoSong: Original scale factor may not be 1.0f
+    private float mOriginScaleFactor = 1.0f;
 
     // View bounds, in view-absolute coordinates
     private final RectF mViewBounds = new RectF();
@@ -188,7 +195,8 @@ public class DefaultZoomableController
      * Gets the minimum scale factor allowed.
      */
     public float getMinScaleFactor() {
-        return mMinScaleFactor;
+        // Edit By BoSong
+        return mMinScaleFactor* mOriginScaleFactor;
     }
 
     /**
@@ -203,7 +211,24 @@ public class DefaultZoomableController
      * Gets the maximum scale factor allowed.
      */
     public float getMaxScaleFactor() {
-        return mMaxScaleFactor;
+        // Edit By BoSong
+        return mMaxScaleFactor* mOriginScaleFactor;
+    }
+
+    /**
+     * Add by BoSong
+     * @param originScaleFactor
+     */
+    public void setOriginScaleFactor(float originScaleFactor) {
+        mOriginScaleFactor = originScaleFactor;
+    }
+
+    /**
+     * Add by BoSong
+     * @return
+     */
+    public float getOriginScaleFactor() {
+        return mOriginScaleFactor;
     }
 
     /**
@@ -252,6 +277,18 @@ public class DefaultZoomableController
      */
     public RectF getViewBounds() {
         return mViewBounds;
+    }
+
+    /**
+     * Add by BoSong
+     */
+    @Override
+    public void initDefaultScale(RectF viewBounds, RectF imageBounds) {
+        if(imageBounds.left > viewBounds.left) { // if image not fits width, scale it to fitting width
+            float scale = (viewBounds.right - viewBounds.left) / (imageBounds.right - imageBounds.left);
+            setOriginScaleFactor(scale);
+            zoomToPoint(scale, new PointF(0.f, 0.f), new PointF(0.f, 0.f));
+        }
     }
 
     /**
@@ -508,7 +545,8 @@ public class DefaultZoomableController
             return false;
         }
         float currentScale = getMatrixScaleFactor(transform);
-        float targetScale = limit(currentScale, mMinScaleFactor, mMaxScaleFactor);
+        // Edit by BoSong
+        float targetScale = limit(currentScale, mMinScaleFactor* mOriginScaleFactor, mMaxScaleFactor* mOriginScaleFactor);
         if (targetScale != currentScale) {
             float scale = targetScale / currentScale;
             transform.postScale(scale, scale, pivotX, pivotY);
