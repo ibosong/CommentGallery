@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity{
             "https://images-cn.ssl-images-amazon.com/images/I/81v6YVUdLnL._SL1000_.jpg",
             "https://images-cn.ssl-images-amazon.com/images/I/61y10jAltmL._SL1000_.jpg",
             "https://images-cn.ssl-images-amazon.com/images/I/71owNXqWERL._SL1000_.jpg",
+            "https://images-cn.ssl-images-amazon.com/images/G/28/aplus_rbs/iPhone6PC_170223.jpg",
+            "https://images-cn.ssl-images-amazon.com/images/G/28/kindle/2016/zhangr/DPfeature_img/voyag_featureimg._CB532421748_.jpg"
     };
     private static final String SAMPLE_COMMENT = "I am somewhat disappointed in the 2015 version as there is not a huge improvement over last year’s model. ";
 
