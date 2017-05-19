@@ -102,6 +102,9 @@ I've optimized some default behaviors to the official ZoomableDraweeView to make
     mCommentGrid.setData(urls);
     ```
 
+    ## Attentions
+
+    You may do some compress works for the large image before rendering to avoid the error "OpenGLRenderer: Bitmap too large to be uploaded into a texture".
 
     ## Last thing
 
