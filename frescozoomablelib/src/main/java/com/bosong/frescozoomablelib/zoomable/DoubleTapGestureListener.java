@@ -11,9 +11,10 @@
  */
 
 /*
- * Edit:
- * Restore to the original size after double tap on the image
- * line 82
+ * Edit to implement these features:
+ * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
+ * 2. Restore to the original size after double tap on the image
+ * 3. Swipe down gesture, generally for closing the gallery.
  *
  * Bo Song
  * 2016/12/29

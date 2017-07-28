@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.bosong.frescozoomablelib.zoomable.ZoomableController;
+
 import java.util.List;
 
 /**
@@ -48,7 +50,6 @@ public class LargeImageGallery extends FrameLayout {
         public void onPageScrollStateChanged(int state) {
         }
     };
-
 
     public LargeImageGallery(@NonNull Context context) {
         this(context, null);
@@ -110,6 +111,10 @@ public class LargeImageGallery extends FrameLayout {
                 }
             });
         }
+    }
+
+    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
+        mAdapter.setSwipeDownListener(listener);
     }
 
     public interface OnSelectionChangedListener{

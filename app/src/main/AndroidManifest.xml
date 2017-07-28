@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CommentGalleryActivity"></activity>
+        <activity android:name=".CommentGalleryActivity"
+            android:theme="@style/TranslucentTheme"></activity>
     </application>
 
 </manifest>

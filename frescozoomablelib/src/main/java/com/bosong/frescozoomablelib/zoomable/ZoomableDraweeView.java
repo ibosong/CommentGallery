@@ -2,6 +2,13 @@
  * This file provided by Facebook is for non-commercial testing and evaluation
  * purposes only.  Facebook reserves all rights not expressly granted.
  *
+ * Edit to implement these features:
+ * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
+ * 2. Restore to the original size after double tap on the image
+ * 3. Swipe down gesture, generally for closing the gallery.
+ *
+ * Copyright Facebook, Bo Song
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -123,6 +130,10 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
         mZoomableController = createZoomableController();
         mZoomableController.setListener(mZoomableListener);
         mTapGestureDetector = new GestureDetector(getContext(), mTapListenerWrapper);
+    }
+
+    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
+        mZoomableController.setSwipeDownListener(listener);
     }
 
     /**

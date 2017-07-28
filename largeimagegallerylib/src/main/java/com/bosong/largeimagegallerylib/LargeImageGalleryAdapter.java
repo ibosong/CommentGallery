@@ -2,11 +2,15 @@ package com.bosong.largeimagegallerylib;
 
 import android.support.annotation.DrawableRes;
 import android.support.v4.view.PagerAdapter;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.bosong.frescozoomablelib.zoomable.AbstractAnimatedZoomableController;
 import com.bosong.frescozoomablelib.zoomable.DefaultZoomableController;
 import com.bosong.frescozoomablelib.zoomable.DoubleTapGestureListener;
+import com.bosong.frescozoomablelib.zoomable.ZoomableController;
 import com.bosong.frescozoomablelib.zoomable.ZoomableDraweeView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -21,6 +25,8 @@ import java.util.List;
  */
 
 public class LargeImageGalleryAdapter extends PagerAdapter {
+    private static final float SWIPE_DOWN_THRETHOLD = 100.F;
+
     List<String> mData;
     ZoomableDraweeView[] mImageViewList;
 
@@ -28,6 +34,8 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
     private int mFailureImageResId;
 
     private View.OnClickListener mItemClickListener;
+    private ZoomableController.SwipeDownListener mSwipeDownListener;
+
     public LargeImageGalleryAdapter(){
         this(null);
     }
@@ -53,6 +61,10 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
         this.mItemClickListener = listener;
     }
 
+    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
+        mSwipeDownListener = listener;
+    }
+
     @Override
     public int getCount() {
         return mData != null ? mData.size() : 0;
@@ -64,7 +76,7 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(final ViewGroup container, int position) {
         if(mData != null && mData.size() > position){
             ZoomableDraweeView zoomableDraweeView = null;
             if(mImageViewList != null && mImageViewList.length > position && mImageViewList[position] != null){
@@ -72,8 +84,22 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
 
             }else{
                 zoomableDraweeView = new ZoomableDraweeView(container.getContext());
-
                 zoomableDraweeView.setAllowTouchInterceptionWhileZoomed(true);
+                zoomableDraweeView.setSwipeDownListener(new ZoomableController.SwipeDownListener() {
+                    @Override
+                    public void onSwipeDown(float y) {
+                        if(mSwipeDownListener != null) {
+                            mSwipeDownListener .onSwipeDown(y);
+                        }
+                    }
+
+                    @Override
+                    public void onSwipeDownRelease(float y) {
+                        if(mSwipeDownListener != null) {
+                            mSwipeDownListener .onSwipeDownRelease(y);
+                        }
+                    }
+                });
                 // needed for double tap to zoom
                 zoomableDraweeView.setIsLongpressEnabled(false);
                 final ZoomableDraweeView finalZoomableDraweeView = zoomableDraweeView;
@@ -85,6 +111,24 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
                         }
                         return super.onSingleTapConfirmed(e);
                     }
+
+//                    @Override
+//                    public boolean onDown(MotionEvent e) {
+//                        return super.onDown(e);
+//                    }
+//
+//                    @Override
+//                    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//                        if(e2.getPointerCount() == 1) {
+//                            AbstractAnimatedZoomableController controller = (AbstractAnimatedZoomableController)finalZoomableDraweeView.getZoomableController();
+//
+//                            if (distanceY < 0 && controller.wasTransformCorrected() && controller.getScaleFactor() == controller.getOriginScaleFactor()) {
+//                                controller.translateTo(-distanceY);
+//                                return true;
+//                            }
+//                        }
+//                        return super.onScroll(e1, e2, distanceX, distanceY);
+//                    }
                 });
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
                         .setUri(mData.get(position % mData.size()))

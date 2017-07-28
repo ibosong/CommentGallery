@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bosong.frescozoomablelib.zoomable.ZoomableController;
 import com.bosong.largeimagegallerylib.LargeImageGallery;
 
 import java.util.List;
@@ -62,6 +63,9 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
         mLargeImageGallery.setCurrentItem(currentItem);
     }
 
+    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
+        mLargeImageGallery.setSwipeDownListener(listener);
+    }
 
     private void initView(){
         LayoutInflater.from(mContext).inflate(R.layout.comment_gallery, this);

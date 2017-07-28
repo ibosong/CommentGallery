@@ -9,10 +9,11 @@
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 /*
- * Edit：
- * Override onGestureEnd method to restore the image to original size when releasing the finger from pinching to smaller. line 182
+ * Edit to implement these features:
+ * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
+ * 2. Restore to the original size after double tap on the image
+ * 3. Swipe down gesture, generally for closing the gallery.
  *
  * Bo Song
  * 2016/12/30
@@ -180,14 +181,17 @@ public abstract class AbstractAnimatedZoomableController extends DefaultZoomable
 
     @Override
     public void onGestureEnd(TransformGestureDetector detector) {
+        super.onGestureEnd(detector);
         // Add by BoSong:
-        // When the image was zoomed in, releasing the fingers will restore the size of image.
-        if (getScaleFactor() < getOriginScaleFactor()) {
+        // Releasing the fingers will restore the size of image when:
+        // 1. The image was zoomed in
+        // 2. The image was translated in y-axis
+        if (getScaleFactor() < getOriginScaleFactor() ||
+                (getScaleFactor() == getOriginScaleFactor() && getTranslateY() != 0.0f)) {
             PointF viewPoint = new PointF(detector.getCurrentX(), detector.getCurrentY());
 
             zoomToPoint(getOriginScaleFactor(), mapViewToImage(viewPoint), viewPoint, LIMIT_ALL, 300, null);
         }
-        super.onGestureEnd(detector);
     }
 
     protected void calculateInterpolation(Matrix outMatrix, float fraction) {

@@ -10,9 +10,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /*
- * Edit：
- * Optimize calling of startGesture and stopGesture in onTouchEvent
- * 优化onTouchEvent中startGesture和stopGesture的触发时机
+ * Edit to implement these features:
+ * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
+ * 2. Swipe down gesture, generally for closing the gallery.
  *
  * Bo Song
  * 2016/12/30
@@ -217,9 +217,9 @@ public class MultiPointerGestureDetector {
                 break;
             case MotionEvent.ACTION_POINTER_UP:
             case MotionEvent.ACTION_UP: {
+                stopGesture();
                 mNewPointerCount = getPressedPointerCount(event);
                 updatePointersOnTap(event);
-                stopGesture();
                 break;
             }
 

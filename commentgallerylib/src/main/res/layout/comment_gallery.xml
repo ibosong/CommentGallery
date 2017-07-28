@@ -3,11 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:background="@android:color/white">
     <com.bosong.largeimagegallerylib.LargeImageGallery
         android:id="@+id/image_gallery"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"/>
 
     <RelativeLayout
         android:id="@+id/rl_title_layout"

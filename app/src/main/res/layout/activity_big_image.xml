@@ -5,12 +5,14 @@
     android:id="@+id/activity_big_image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
     tools:context="com.bosong.commentgallery.CommentGalleryActivity">
 
     <com.bosong.commentgallerylib.CommentGallery
         android:id="@+id/comment_gallery"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

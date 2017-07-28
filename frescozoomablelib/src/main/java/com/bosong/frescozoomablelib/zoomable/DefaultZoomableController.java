@@ -11,8 +11,10 @@
  */
 
 /*
- * Edit：
- * Remove restartGesture in onGestureUpdate
+ * Edit to implement these features:
+ * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
+ * 2. Restore to the original size after double tap on the image
+ * 3. Swipe down gesture, generally for closing the gallery.
  *
  *  Bo Song
  *  2016/12/30
@@ -94,6 +96,9 @@ public class DefaultZoomableController
     private final RectF mTempRect = new RectF();
     private boolean mWasTransformCorrected;
 
+    private boolean mCanScrollUpThisGesture;
+    protected SwipeDownListener mSwipeDownListener;
+
     public static DefaultZoomableController newInstance() {
         return new DefaultZoomableController(TransformGestureDetector.newInstance());
     }
@@ -101,6 +106,11 @@ public class DefaultZoomableController
     public DefaultZoomableController(TransformGestureDetector gestureDetector) {
         mGestureDetector = gestureDetector;
         mGestureDetector.setListener(this);
+    }
+
+    @Override
+    public void setSwipeDownListener(SwipeDownListener listener) {
+        mSwipeDownListener = listener;
     }
 
     /**
@@ -237,6 +247,11 @@ public class DefaultZoomableController
     @Override
     public float getScaleFactor() {
         return getMatrixScaleFactor(mActiveTransform);
+    }
+
+    @Override
+    public float getTranslateY() {
+        return getMatrixTranslateY(mActiveTransform);
     }
 
     /**
@@ -433,6 +448,15 @@ public class DefaultZoomableController
         return transformCorrected;
     }
 
+    public void translateTo(float distanceY) {
+        calculateTranslateTransform(mActiveTransform, distanceY);
+        onTransformChanged();
+    }
+
+    protected void calculateTranslateTransform(Matrix outTransform, float distanceY) {
+        outTransform.postTranslate(0, distanceY);
+    }
+
     /**
      * Sets a new zoom transformation.
      */
@@ -472,12 +496,27 @@ public class DefaultZoomableController
         // assume the worst case where the user tries to scroll out of edge, which would cause
         // transformation to be corrected.
         mWasTransformCorrected = !canScrollInAllDirection();
+        if(!canScrollUp()) {
+            mCanScrollUpThisGesture = false;
+        } else {
+            mCanScrollUpThisGesture = true;
+        }
     }
 
     @Override
     public void onGestureUpdate(TransformGestureDetector detector) {
         FLog.v(TAG, "onGestureUpdate");
         boolean transformCorrected = calculateGestureTransform(mActiveTransform, LIMIT_ALL);
+        // Only allow swipe down when:
+        // 1. In original scale state
+        // 2. Transform was corrected when GestureBegin
+        float translateY = detector.getTranslationY();
+        if(getScaleFactor() == getOriginScaleFactor() && !mCanScrollUpThisGesture && translateY > 0) {
+            translateTo(translateY);
+            if(mSwipeDownListener != null) {
+                mSwipeDownListener.onSwipeDown(translateY);
+            }
+        }
         onTransformChanged();
 //        if (transformCorrected) {
 //            mGestureDetector.restartGesture();
@@ -488,7 +527,11 @@ public class DefaultZoomableController
 
     @Override
     public void onGestureEnd(TransformGestureDetector detector) {
-        FLog.v(TAG, "onGestureEnd");
+        FLog.v(TAG, "onSwipeDownGestureEnd");
+        float translateY = detector.getTranslationY();
+        if(getScaleFactor() == getOriginScaleFactor() && !mCanScrollUpThisGesture && translateY > 0 && mSwipeDownListener != null) {
+            mSwipeDownListener.onSwipeDownRelease(translateY);
+        }
     }
 
     /**
@@ -600,7 +643,9 @@ public class DefaultZoomableController
     /**
      * Returns the offset necessary to make sure that:
      * - the image is centered within the limit if the image is smaller than the limit
+     * 图片尺寸小于边界则居中到limitCenter
      * - there is no empty space on left/right if the image is bigger than the limit
+     * 图片尺寸大于边界则缩小至充满边界 只保证一边 并居中到limitCenter
      */
     private float getOffset(
             float imageStart,
@@ -648,6 +693,11 @@ public class DefaultZoomableController
         return mTempValues[Matrix.MSCALE_X];
     }
 
+    private float getMatrixTranslateY(Matrix transform) {
+        transform.getValues(mTempValues);
+        return mTempValues[Matrix.MTRANS_Y];
+    }
+
     /**
      * Same as {@code Matrix.isIdentity()}, but with tolerance {@code eps}.
      */
@@ -680,6 +730,14 @@ public class DefaultZoomableController
                 mTransformedImageBounds.top < mViewBounds.top - EPS &&
                 mTransformedImageBounds.right > mViewBounds.right + EPS &&
                 mTransformedImageBounds.bottom > mViewBounds.bottom + EPS;
+    }
+
+    private boolean canScrollUp() {
+        return mTransformedImageBounds.top < mViewBounds.top - EPS;
+    }
+
+    private boolean canScrollDown() {
+        return mTransformedImageBounds.bottom > mViewBounds.bottom + EPS;
     }
 
     @Override
