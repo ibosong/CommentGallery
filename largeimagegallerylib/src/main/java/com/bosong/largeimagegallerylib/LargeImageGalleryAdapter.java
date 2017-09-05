@@ -34,7 +34,7 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
     private int mFailureImageResId;
 
     private View.OnClickListener mItemClickListener;
-    private ZoomableController.SwipeDownListener mSwipeDownListener;
+    private ZoomableController.OnSwipeDownListener mSwipeDownListener;
 
     public LargeImageGalleryAdapter(){
         this(null);
@@ -61,7 +61,7 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
         this.mItemClickListener = listener;
     }
 
-    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
+    public void setSwipeDownListener(ZoomableController.OnSwipeDownListener listener) {
         mSwipeDownListener = listener;
     }
 
@@ -85,23 +85,9 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
             }else{
                 zoomableDraweeView = new ZoomableDraweeView(container.getContext());
                 zoomableDraweeView.setAllowTouchInterceptionWhileZoomed(true);
-                zoomableDraweeView.setSwipeDownListener(new ZoomableController.SwipeDownListener() {
-                    @Override
-                    public void onSwipeDown(float y) {
-                        if(mSwipeDownListener != null) {
-                            mSwipeDownListener .onSwipeDown(y);
-                        }
-                    }
-
-                    @Override
-                    public void onSwipeDownRelease(float y) {
-                        if(mSwipeDownListener != null) {
-                            mSwipeDownListener .onSwipeDownRelease(y);
-                        }
-                    }
-                });
                 // needed for double tap to zoom
                 zoomableDraweeView.setIsLongpressEnabled(false);
+                zoomableDraweeView.setSwipeDownListener(mSwipeDownListener);
                 final ZoomableDraweeView finalZoomableDraweeView = zoomableDraweeView;
                 zoomableDraweeView.setTapListener(new DoubleTapGestureListener(finalZoomableDraweeView){
                     @Override
@@ -111,24 +97,6 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
                         }
                         return super.onSingleTapConfirmed(e);
                     }
-
-//                    @Override
-//                    public boolean onDown(MotionEvent e) {
-//                        return super.onDown(e);
-//                    }
-//
-//                    @Override
-//                    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//                        if(e2.getPointerCount() == 1) {
-//                            AbstractAnimatedZoomableController controller = (AbstractAnimatedZoomableController)finalZoomableDraweeView.getZoomableController();
-//
-//                            if (distanceY < 0 && controller.wasTransformCorrected() && controller.getScaleFactor() == controller.getOriginScaleFactor()) {
-//                                controller.translateTo(-distanceY);
-//                                return true;
-//                            }
-//                        }
-//                        return super.onScroll(e1, e2, distanceX, distanceY);
-//                    }
                 });
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
                         .setUri(mData.get(position % mData.size()))
@@ -164,7 +132,6 @@ public class LargeImageGalleryAdapter extends PagerAdapter {
             container.removeView(imageView);
         }
     }
-
 
     public ZoomableDraweeView getItem(int position){
         if(position > -1 && mImageViewList != null && mImageViewList.length > position){

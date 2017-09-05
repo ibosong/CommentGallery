@@ -12,6 +12,7 @@
 
 package com.bosong.frescozoomablelib.gestures;
 
+import android.content.Context;
 import android.view.MotionEvent;
 
 /**

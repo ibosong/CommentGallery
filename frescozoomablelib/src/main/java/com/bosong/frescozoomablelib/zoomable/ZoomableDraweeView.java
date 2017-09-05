@@ -5,7 +5,8 @@
  * Edit to implement these features:
  * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
  * 2. Restore to the original size after double tap on the image
- * 3. Swipe down gesture, generally for closing the gallery.
+ * 3. Display long image
+ * 4. Swipe down gesture, generally for closing the gallery.
  *
  * Copyright Facebook, Bo Song
  *
@@ -63,7 +64,6 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
     private final RectF mViewBounds = new RectF();
 
     private DraweeController mHugeImageController;
-    // Edit by BoSong: Change mZoomableController to AnimatedZoomableController type
     private ZoomableController mZoomableController;
     private GestureDetector mTapGestureDetector;
     private boolean mAllowTouchInterceptionWhileZoomed =
@@ -117,6 +117,10 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
         init();
     }
 
+    public void setSwipeDownListener(DefaultZoomableController.OnSwipeDownListener listener) {
+        mZoomableController.setSwipeDownListener(listener);
+    }
+
     protected void inflateHierarchy(Context context, @Nullable AttributeSet attrs) {
         Resources resources = context.getResources();
         GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(resources)
@@ -130,10 +134,6 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
         mZoomableController = createZoomableController();
         mZoomableController.setListener(mZoomableListener);
         mTapGestureDetector = new GestureDetector(getContext(), mTapListenerWrapper);
-    }
-
-    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
-        mZoomableController.setSwipeDownListener(listener);
     }
 
     /**

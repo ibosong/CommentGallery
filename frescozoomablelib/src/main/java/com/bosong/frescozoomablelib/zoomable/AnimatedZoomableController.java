@@ -16,6 +16,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Matrix;
 import android.support.annotation.Nullable;
 import android.view.animation.DecelerateInterpolator;

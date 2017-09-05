@@ -113,8 +113,10 @@ public class LargeImageGallery extends FrameLayout {
         }
     }
 
-    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
-        mAdapter.setSwipeDownListener(listener);
+    public void setOnSwipeDownListener(ZoomableController.OnSwipeDownListener listener) {
+        if(mAdapter != null) {
+            mAdapter.setSwipeDownListener(listener);
+        }
     }
 
     public interface OnSelectionChangedListener{

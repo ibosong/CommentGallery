@@ -11,10 +11,11 @@
  */
 
 /*
- * Edit to implement these features:
+* Edit to implement these features:
  * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
  * 2. Restore to the original size after double tap on the image
- * 3. Swipe down gesture, generally for closing the gallery.
+ * 3. Display long image
+ * 4. Swipe down gesture, generally for closing the gallery.
  *
  *  Bo Song
  *  2016/12/30
@@ -25,12 +26,16 @@ package com.bosong.frescozoomablelib.zoomable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 
+import com.bosong.frescozoomablelib.gestures.SwipeGestureDetector;
 import com.bosong.frescozoomablelib.gestures.TransformGestureDetector;
 import com.facebook.common.logging.FLog;
 
@@ -63,7 +68,6 @@ public class DefaultZoomableController
 
     private static final RectF IDENTITY_RECT = new RectF(0, 0, 1, 1);
 
-    // Add by BoSong
     private static final float MAX_SCALE_FACTOR = 3.0F;
     private static final float MIN_SCALE_FACTOR = 0.7F;
 
@@ -97,7 +101,8 @@ public class DefaultZoomableController
     private boolean mWasTransformCorrected;
 
     private boolean mCanScrollUpThisGesture;
-    protected SwipeDownListener mSwipeDownListener;
+    private boolean mIsInSwipeDown;
+    protected OnSwipeDownListener mSwipeDownListener;
 
     public static DefaultZoomableController newInstance() {
         return new DefaultZoomableController(TransformGestureDetector.newInstance());
@@ -109,7 +114,7 @@ public class DefaultZoomableController
     }
 
     @Override
-    public void setSwipeDownListener(SwipeDownListener listener) {
+    public void setSwipeDownListener(OnSwipeDownListener listener) {
         mSwipeDownListener = listener;
     }
 
@@ -206,7 +211,7 @@ public class DefaultZoomableController
      */
     public float getMinScaleFactor() {
         // Edit By BoSong
-        return mMinScaleFactor* mOriginScaleFactor;
+        return mMinScaleFactor * mOriginScaleFactor;
     }
 
     /**
@@ -222,11 +227,12 @@ public class DefaultZoomableController
      */
     public float getMaxScaleFactor() {
         // Edit By BoSong
-        return mMaxScaleFactor* mOriginScaleFactor;
+        return mMaxScaleFactor * mOriginScaleFactor;
     }
 
     /**
      * Add by BoSong
+     *
      * @param originScaleFactor
      */
     public void setOriginScaleFactor(float originScaleFactor) {
@@ -235,6 +241,7 @@ public class DefaultZoomableController
 
     /**
      * Add by BoSong
+     *
      * @return
      */
     public float getOriginScaleFactor() {
@@ -299,7 +306,7 @@ public class DefaultZoomableController
      */
     @Override
     public void initDefaultScale(RectF viewBounds, RectF imageBounds) {
-        if(imageBounds.left > viewBounds.left) { // if image not fits width, scale it to fitting width
+        if (imageBounds.left > viewBounds.left) { // if image not fits width, scale it to fitting width
             float scale = (viewBounds.right - viewBounds.left) / (imageBounds.right - imageBounds.left);
             setOriginScaleFactor(scale);
             zoomToPoint(scale, new PointF(0.f, 0.f), new PointF(0.f, 0.f));
@@ -448,13 +455,21 @@ public class DefaultZoomableController
         return transformCorrected;
     }
 
-    public void translateTo(float distanceY) {
-        calculateTranslateTransform(mActiveTransform, distanceY);
+    public void translateTo(float distanceX, float distanceY) {
+        FLog.d(TAG, "Before translateTo: " + mActiveTransform.toShortString());
+        calculateTranslateTransform(mActiveTransform, distanceX, distanceY);
         onTransformChanged();
     }
 
-    protected void calculateTranslateTransform(Matrix outTransform, float distanceY) {
-        outTransform.postTranslate(0, distanceY);
+    protected void calculateTranslateTransform(Matrix outTransform, float distanceX, float distanceY) {
+        outTransform.postTranslate(distanceX, distanceY);
+        float[] viewAbsolute = mTempValues;
+        viewAbsolute[0] = 0.5f;
+        viewAbsolute[1] = 0.5f;
+        mapRelativeToAbsolute(viewAbsolute, viewAbsolute, 1);
+        float scale = (getViewBounds().height() - distanceY) / getViewBounds().height();
+        outTransform.postScale(scale, scale, viewAbsolute[0], viewAbsolute[1]);
+        limitScale(outTransform, viewAbsolute[0], viewAbsolute[1], LIMIT_ALL);
     }
 
     /**
@@ -496,7 +511,7 @@ public class DefaultZoomableController
         // assume the worst case where the user tries to scroll out of edge, which would cause
         // transformation to be corrected.
         mWasTransformCorrected = !canScrollInAllDirection();
-        if(!canScrollUp()) {
+        if (!canScrollUp()) {
             mCanScrollUpThisGesture = false;
         } else {
             mCanScrollUpThisGesture = true;
@@ -510,9 +525,14 @@ public class DefaultZoomableController
         // Only allow swipe down when:
         // 1. In original scale state
         // 2. Transform was corrected when GestureBegin
+        float translateX = detector.getTranslationX();
         float translateY = detector.getTranslationY();
-        if(getScaleFactor() == getOriginScaleFactor() && !mCanScrollUpThisGesture && translateY > 0) {
-            translateTo(translateY);
+
+        if (getScaleFactor() == getOriginScaleFactor() && !mCanScrollUpThisGesture && translateY > 0) {
+            FLog.d(TAG, "onGestureUpdate: start X: " + detector.getPivotX() + " start Y: " + detector.getPivotY());
+            FLog.d(TAG, "onGestureUpdate: current X: " + detector.getCurrentX() + " current Y: " + detector.getCurrentY());
+            translateTo(translateX, translateY);
+            mIsInSwipeDown = true;
             if(mSwipeDownListener != null) {
                 mSwipeDownListener.onSwipeDown(translateY);
             }
@@ -528,9 +548,15 @@ public class DefaultZoomableController
     @Override
     public void onGestureEnd(TransformGestureDetector detector) {
         FLog.v(TAG, "onSwipeDownGestureEnd");
-        float translateY = detector.getTranslationY();
-        if(getScaleFactor() == getOriginScaleFactor() && !mCanScrollUpThisGesture && translateY > 0 && mSwipeDownListener != null) {
-            mSwipeDownListener.onSwipeDownRelease(translateY);
+        dispatchSwipeRelease(detector.getTranslationY());
+    }
+
+    protected void dispatchSwipeRelease(float translateY) {
+        if(mIsInSwipeDown) {
+            mIsInSwipeDown = false;
+            if(mSwipeDownListener != null) {
+                mSwipeDownListener.onSwipeRelease(translateY);
+            }
         }
     }
 
@@ -589,7 +615,7 @@ public class DefaultZoomableController
         }
         float currentScale = getMatrixScaleFactor(transform);
         // Edit by BoSong
-        float targetScale = limit(currentScale, mMinScaleFactor* mOriginScaleFactor, mMaxScaleFactor* mOriginScaleFactor);
+        float targetScale = limit(currentScale, mMinScaleFactor * mOriginScaleFactor, mMaxScaleFactor * mOriginScaleFactor);
         if (targetScale != currentScale) {
             float scale = targetScale / currentScale;
             transform.postScale(scale, scale, pivotX, pivotY);
@@ -769,4 +795,5 @@ public class DefaultZoomableController
     public int computeVerticalScrollExtent() {
         return (int) mViewBounds.height();
     }
+
 }

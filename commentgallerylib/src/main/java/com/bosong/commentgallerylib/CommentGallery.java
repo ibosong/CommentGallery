@@ -1,6 +1,8 @@
 package com.bosong.commentgallerylib;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.FloatRange;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -17,9 +19,12 @@ import java.util.List;
  * Created by boson on 2016/12/22.
  */
 
-public class CommentGallery extends RelativeLayout implements LargeImageGallery.OnSelectionChangedListener, LargeImageGallery.OnItemClickListener {
+public class CommentGallery extends RelativeLayout implements LargeImageGallery.OnSelectionChangedListener, LargeImageGallery.OnItemClickListener, ZoomableController.OnSwipeDownListener {
     private static final int COLLAPSED_COMMENT_MAX_LINES = 2;
     private static final String INDICATOR_STRING_FORMAT = "%d / %d";
+    private static float ALPHA_TRANSLATE_MAX;
+    private static float SIZE_TRANSLATE_MAX;
+    private static float CLOSE_ACTIVITY_THRESHOLD;
 
     private Context mContext;
     private RelativeLayout mTitleLayout;
@@ -49,6 +54,9 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
 
     public CommentGallery(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        ALPHA_TRANSLATE_MAX = Utils.getWindowHeight(context) / 3;
+        SIZE_TRANSLATE_MAX = Utils.getWindowHeight(context) / 2;
+        CLOSE_ACTIVITY_THRESHOLD = Utils.getWindowHeight(context) / 3;
         mContext = context;
         initView();
     }
@@ -63,10 +71,6 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
         mLargeImageGallery.setCurrentItem(currentItem);
     }
 
-    public void setSwipeDownListener(ZoomableController.SwipeDownListener listener) {
-        mLargeImageGallery.setSwipeDownListener(listener);
-    }
-
     private void initView(){
         LayoutInflater.from(mContext).inflate(R.layout.comment_gallery, this);
         mLargeImageGallery = (LargeImageGallery) findViewById(R.id.image_gallery);
@@ -77,7 +81,9 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
 
         mLargeImageGallery.setOnImageSelectedListener(this);
         mLargeImageGallery.setOnItemClickListener(this);
+        mLargeImageGallery.setOnSwipeDownListener(this);
         mCommentLayout.setOnClickListener(mOnCommentClickListener);
+        setBackgroundAlpha(this, 1.0f);
     }
 
     private void initViewData(){
@@ -109,8 +115,7 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
         }
     }
 
-
-    private void handleCommentVisual(){
+    private void handleCommentVisual() {
         if(mIsCommentCollapsed){
             this.expandComment();
             mIsCommentCollapsed = false;
@@ -120,12 +125,12 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
         }
     }
 
-    private void expandComment(){
+    private void expandComment() {
         mTextViewComment.setMaxLines(Integer.MAX_VALUE);
         mTextViewComment.setEllipsize(null);
     }
 
-    private void collapseComment(){
+    private void collapseComment() {
         mTextViewComment.setMaxLines(COLLAPSED_COMMENT_MAX_LINES);
         mTextViewComment.setEllipsize(TextUtils.TruncateAt.END);
     }
@@ -138,5 +143,40 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
     @Override
     public void onItemClick(int currentIndex) {
         handleMaskVisual();
+    }
+
+    @Override
+    public void onSwipeDown(float translateY) {
+        float alpha = limitTranslateY((ALPHA_TRANSLATE_MAX - translateY)/ALPHA_TRANSLATE_MAX);
+        setBackgroundAlpha(this, alpha);
+
+        if(mTitleLayout.getVisibility() == VISIBLE){
+            mTitleLayout.setVisibility(GONE);
+            mCommentLayout.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void onSwipeRelease(float translateY) {
+        if(translateY >= CLOSE_ACTIVITY_THRESHOLD) {
+            if(mContext instanceof Activity) {
+                ((Activity)mContext).finish();
+            }
+        } else {
+            setBackgroundAlpha(this, 1.0f);
+            if(mTitleLayout.getVisibility() == GONE){
+                mTitleLayout.setVisibility(VISIBLE);
+                mCommentLayout.setVisibility(VISIBLE);
+            }
+        }
+    }
+
+    private float limitTranslateY(float y) {
+        return Math.min(1, Math.max(y, 0));
+    }
+
+    private void setBackgroundAlpha(View view, @FloatRange(from = 0.f, to = 1.f) float alpha) {
+        int xxx = ((byte)(0xff * alpha) << 24);
+        view.setBackgroundColor(xxx);
     }
 }

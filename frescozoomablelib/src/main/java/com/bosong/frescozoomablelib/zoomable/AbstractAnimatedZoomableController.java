@@ -10,10 +10,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 /*
- * Edit to implement these features:
+* Edit to implement these features:
  * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
  * 2. Restore to the original size after double tap on the image
- * 3. Swipe down gesture, generally for closing the gallery.
+ * 3. Display long image
+ * 4. Swipe down gesture, generally for closing the gallery.
  *
  * Bo Song
  * 2016/12/30

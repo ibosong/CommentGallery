@@ -2,10 +2,11 @@
  * This file provided by Facebook is for non-commercial testing and evaluation
  * purposes only.  Facebook reserves all rights not expressly granted.
  *
- * Edit to implement these features:
+* Edit to implement these features:
  * 1. Restore scale after releasing fingers when zoomed in or translated in y-axis.
  * 2. Restore to the original size after double tap on the image
- * 3. Swipe down gesture, generally for closing the gallery.
+ * 3. Display long image
+ * 4. Swipe down gesture, generally for closing the gallery.
  *
  * Copyright Facebook, Bo Song
  *
@@ -42,6 +43,13 @@ public interface ZoomableController {
         void onTransformChanged(Matrix transform);
     }
 
+    interface OnSwipeDownListener {
+        void onSwipeDown(float translateY);
+        void onSwipeRelease(float translateY);
+    }
+
+    void setSwipeDownListener(OnSwipeDownListener listener);
+
     /**
      * Enables the controller. The controller is enabled when the image has been loaded.
      *
@@ -63,8 +71,6 @@ public interface ZoomableController {
      * @param listener the listener
      */
     void setListener(Listener listener);
-
-    void setSwipeDownListener(SwipeDownListener listener);
 
     /**
      * Gets the current scale factor. A convenience method for calculating the scale from the
@@ -141,9 +147,4 @@ public interface ZoomableController {
      * @return whether the controller handled the event
      */
     boolean onTouchEvent(MotionEvent event);
-
-    interface SwipeDownListener {
-        void onSwipeDown(float y);
-        void onSwipeDownRelease(float y);
-    }
 }

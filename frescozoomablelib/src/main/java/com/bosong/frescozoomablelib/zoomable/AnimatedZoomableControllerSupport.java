@@ -12,6 +12,7 @@
 package com.bosong.frescozoomablelib.zoomable;
 
 
+import android.content.Context;
 import android.graphics.Matrix;
 import android.support.annotation.Nullable;
 import android.view.animation.DecelerateInterpolator;
