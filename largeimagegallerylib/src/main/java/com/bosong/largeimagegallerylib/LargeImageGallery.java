@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.bosong.frescozoomablelib.zoomable.ZoomableController;
+import com.bosong.frescozoomablelib.zoomable.ZoomableDraweeView;
 
 import java.util.List;
 
@@ -64,6 +65,10 @@ public class LargeImageGallery extends FrameLayout {
         mContext = context;
         initView();
         initData();
+    }
+
+    public ZoomableDraweeView getCurrentItemView() {
+        return mAdapter.getItem(mCurrentIndex);
     }
 
     private void initView(){

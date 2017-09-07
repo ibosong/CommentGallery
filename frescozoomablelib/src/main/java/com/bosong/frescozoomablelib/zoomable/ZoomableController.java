@@ -65,6 +65,8 @@ public interface ZoomableController {
      */
     boolean isEnabled();
 
+    void setEnableGestureDiscard(boolean discardGesture);
+
     /**
      * Sets the listener for the controller to call back when the matrix changes.
      *
@@ -79,6 +81,8 @@ public interface ZoomableController {
      * @return the current scale factor
      */
     float getScaleFactor();
+
+    float getOriginScaleFactor();
 
     float getTranslateY();
 
@@ -116,6 +120,8 @@ public interface ZoomableController {
      * @return the transform
      */
     Matrix getTransform();
+
+    RectF getImageBounds();
 
     /**
      * Sets the bounds of the image post transform prior to application of the zoomable

@@ -7,10 +7,15 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bosong.frescozoomablelib.zoomable.ZoomableController;
+import com.bosong.frescozoomablelib.zoomable.ZoomableDraweeView;
 import com.bosong.largeimagegallerylib.LargeImageGallery;
 
 import java.util.List;
@@ -158,10 +163,34 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
 
     @Override
     public void onSwipeRelease(float translateY) {
-        if(translateY >= CLOSE_ACTIVITY_THRESHOLD) {
-            if(mContext instanceof Activity) {
-                ((Activity)mContext).finish();
+        if(translateY >= CLOSE_ACTIVITY_THRESHOLD) { // need close activity
+            ZoomableDraweeView currentItemView = mLargeImageGallery.getCurrentItemView();
+            if(currentItemView != null) {
+                currentItemView.setEnableGestureDiscard(false);
+                TranslateAnimation animation = new TranslateAnimation(0.f, 0.f, currentItemView.getZoomableController().getImageBounds().top, Utils.getWindowHeight(mContext));
+                animation.setDuration(200);
+                animation.setAnimationListener(new Animation.AnimationListener()  {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(mContext instanceof Activity) {
+                            refreshWindowOpacity(0.0f);
+                            ((Activity)mContext).finish();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                startAnimation(animation);
             }
+
         } else {
             setBackgroundAlpha(this, 1.0f);
             if(mTitleLayout.getVisibility() == GONE){
@@ -178,5 +207,15 @@ public class CommentGallery extends RelativeLayout implements LargeImageGallery.
     private void setBackgroundAlpha(View view, @FloatRange(from = 0.f, to = 1.f) float alpha) {
         int xxx = ((byte)(0xff * alpha) << 24);
         view.setBackgroundColor(xxx);
+    }
+
+    private void refreshWindowOpacity(@FloatRange(from = 0.0f, to = 1.0f) float alpha) {
+        if(!(mContext instanceof Activity)) {
+            return;
+        }
+        Window window = ((Activity)mContext).getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.alpha=alpha;
+        window.setAttributes(lp);
     }
 }

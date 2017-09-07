@@ -181,18 +181,10 @@ public abstract class AbstractAnimatedZoomableController extends DefaultZoomable
     }
 
     @Override
-    public void onGestureEnd(TransformGestureDetector detector) {
-        super.onGestureEnd(detector);
-        // Add by BoSong:
-        // Releasing the fingers will restore the size of image when:
-        // 1. The image was zoomed in
-        // 2. The image was translated in y-axis
-        if (getScaleFactor() < getOriginScaleFactor() ||
-                (getScaleFactor() == getOriginScaleFactor() && getTranslateY() != 0.0f)) {
-            PointF viewPoint = new PointF(detector.getCurrentX(), detector.getCurrentY());
+    protected void restoreImage(float fromX, float fromY) {
+        PointF viewPoint = new PointF(fromX, fromY);
 
-            zoomToPoint(getOriginScaleFactor(), mapViewToImage(viewPoint), viewPoint, LIMIT_ALL, 300, null);
-        }
+        zoomToPoint(getOriginScaleFactor(), mapViewToImage(viewPoint), viewPoint, LIMIT_ALL, 300, null);
     }
 
     protected void calculateInterpolation(Matrix outMatrix, float fraction) {

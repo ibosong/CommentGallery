@@ -26,16 +26,12 @@ package com.bosong.frescozoomablelib.zoomable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.support.annotation.IntDef;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 
-import com.bosong.frescozoomablelib.gestures.SwipeGestureDetector;
 import com.bosong.frescozoomablelib.gestures.TransformGestureDetector;
 import com.facebook.common.logging.FLog;
 
@@ -76,6 +72,7 @@ public class DefaultZoomableController
     private Listener mListener = null;
 
     private boolean mIsEnabled = false;
+    private boolean mEnableGestureDiscard = true;
     private boolean mIsRotationEnabled = false;
     private boolean mIsScaleEnabled = true;
     private boolean mIsTranslationEnabled = true;
@@ -146,6 +143,11 @@ public class DefaultZoomableController
         if (!enabled) {
             reset();
         }
+    }
+
+    @Override
+    public void setEnableGestureDiscard(boolean enable) {
+        mEnableGestureDiscard = enable;
     }
 
     /**
@@ -244,6 +246,7 @@ public class DefaultZoomableController
      *
      * @return
      */
+    @Override
     public float getOriginScaleFactor() {
         return mOriginScaleFactor;
     }
@@ -275,6 +278,7 @@ public class DefaultZoomableController
     /**
      * Gets the non-transformed image bounds, in view-absolute coordinates.
      */
+    @Override
     public RectF getImageBounds() {
         return mImageBounds;
     }
@@ -549,6 +553,30 @@ public class DefaultZoomableController
     public void onGestureEnd(TransformGestureDetector detector) {
         FLog.v(TAG, "onSwipeDownGestureEnd");
         dispatchSwipeRelease(detector.getTranslationY());
+
+        if (mEnableGestureDiscard && isGestureNeedDiscard()) {
+            restoreImage(detector.getCurrentX(), detector.getCurrentY());
+        }
+    }
+
+    protected boolean isGestureNeedDiscard() {
+
+        // Releasing the fingers will restore the size of image when:
+        // 1. The image was zoomed in
+        // 2. Or the image was translated in y-axis
+        return getScaleFactor() < getOriginScaleFactor() ||
+                (getScaleFactor() == getOriginScaleFactor() && getTranslateY() != 0.0f);
+    }
+
+    /**
+     * Restore the image's size and position from another position
+     * @param fromX
+     * @param fromY
+     */
+    protected void restoreImage(float fromX, float fromY) {
+        PointF viewPoint = new PointF(fromX, fromY);
+
+        zoomToPoint(getOriginScaleFactor(), mapViewToImage(viewPoint), viewPoint);
     }
 
     protected void dispatchSwipeRelease(float translateY) {
